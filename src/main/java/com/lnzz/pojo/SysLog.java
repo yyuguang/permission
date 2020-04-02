@@ -1,5 +1,8 @@
 package com.lnzz.pojo;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 /**
@@ -10,6 +13,8 @@ import java.util.Date;
  * @date 2020/4/2 14:35
  * @Description:
  */
+@Data
+@NoArgsConstructor
 public class SysLog {
     private Integer id;
 
@@ -24,60 +29,4 @@ public class SysLog {
     private String operateIp;
 
     private Integer status;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getTargetId() {
-        return targetId;
-    }
-
-    public void setTargetId(Integer targetId) {
-        this.targetId = targetId;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator == null ? null : operator.trim();
-    }
-
-    public Date getOperateTime() {
-        return operateTime;
-    }
-
-    public void setOperateTime(Date operateTime) {
-        this.operateTime = operateTime;
-    }
-
-    public String getOperateIp() {
-        return operateIp;
-    }
-
-    public void setOperateIp(String operateIp) {
-        this.operateIp = operateIp == null ? null : operateIp.trim();
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 }
