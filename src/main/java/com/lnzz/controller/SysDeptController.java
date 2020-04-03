@@ -5,12 +5,12 @@ import com.lnzz.dto.DeptLevelDto;
 import com.lnzz.param.DeptParam;
 import com.lnzz.service.SysDeptService;
 import com.lnzz.service.SysTreeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +24,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/sys/dept")
+@Api(value = "部门相关", tags = {"部门相关接口"})
 @Slf4j
 public class SysDeptController {
 
@@ -32,23 +33,26 @@ public class SysDeptController {
     @Autowired
     private SysTreeService sysTreeService;
 
-    @RequestMapping(value = "/save.json", method = RequestMethod.POST)
+    @ApiOperation(value = "新增部门", notes = "新增部门", httpMethod = "POST")
+    @PostMapping("/save.json")
     @ResponseBody
-    public JsonData saveDept(DeptParam param) {
+    public JsonData saveDept(@RequestBody DeptParam param) {
         sysDeptService.save(param);
         return JsonData.success();
     }
 
-    @RequestMapping(value = "/tree.json", method = RequestMethod.GET)
+    @ApiOperation(value = "查询部门树", notes = "查询部门树", httpMethod = "GET")
+    @GetMapping("/tree.json")
     @ResponseBody
     public JsonData tree() {
         List<DeptLevelDto> dtoList = sysTreeService.deptTree();
         return JsonData.success(dtoList);
     }
 
-    @RequestMapping(value = "/update.json", method = RequestMethod.PUT)
+    @ApiOperation(value = "编辑部门", notes = "编辑部门", httpMethod = "PUT")
+    @PutMapping("/update.json")
     @ResponseBody
-    public JsonData updateDept(DeptParam param) {
+    public JsonData updateDept(@RequestBody DeptParam param) {
         sysDeptService.update(param);
         return JsonData.success();
     }
