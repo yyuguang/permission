@@ -52,9 +52,9 @@ public interface SysDeptMapper {
      * countByNameAndParentId
      *
      * @param parentId
-     * @param deptName
-     * @param deptId
+     * @param name
+     * @param id
      * @return
      */
-    int countByNameAndParentId(@Param("parentId") Integer parentId, @Param("deptName") String deptName, @Param("deptId") Integer deptId);
+    int countByNameAndParentId(@Param("parentId") Integer parentId, @Param("name") String name, @Param("id") Integer id);
 }

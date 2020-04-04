@@ -39,10 +39,4 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <!-- 将SwaggerConfig配置类注入 -->
-    <bean class="com.lnzz.config.SwaggerConfig"/>
-    <!-- 配置swagger资源不被拦截 -->
-    <mvc:resources location="classpath:/META-INF/resources/" mapping="swagger-ui.html"/>
-    <mvc:resources location="classpath:/META-INF/resources/webjars/" mapping="/webjars/**"/>
-
 </beans>
