@@ -3,12 +3,14 @@ package com.lnzz.service.impl;
 import com.google.common.base.Preconditions;
 import com.lnzz.beans.PageQuery;
 import com.lnzz.beans.PageResult;
+import com.lnzz.common.RequestHolder;
 import com.lnzz.dao.SysUserMapper;
 import com.lnzz.exception.ParamException;
 import com.lnzz.param.UserParam;
 import com.lnzz.pojo.SysUser;
 import com.lnzz.service.SysUserService;
 import com.lnzz.utils.BeanValidator;
+import com.lnzz.utils.IpUtil;
 import com.lnzz.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,8 +50,8 @@ public class SysUserServiceImpl implements SysUserService {
         SysUser user = SysUser.builder().username(param.getUsername()).mail(param.getMail()).password(encryptedPassword).telephone(param.getTelephone())
                 .status(param.getStatus()).deptId(param.getDeptId()).remark(param.getRemark()).build();
 
-        user.setOperator("system-update");
-        user.setOperateIp("127.0.0.1");
+        user.setOperator(RequestHolder.getCurrentUser().getUsername());
+        user.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         user.setOperateTime(new Date());
 
         //todo send Email
@@ -66,12 +68,14 @@ public class SysUserServiceImpl implements SysUserService {
         if (checkEmailExist(param.getMail(), param.getId())) {
             throw new ParamException("该邮箱已被占用");
         }
-
         SysUser before = sysUserMapper.selectByPrimaryKey(param.getId());
         Preconditions.checkNotNull(before, "待更新的用户不存在");
-
-        SysUser after = SysUser.builder().id(param.getId()).username(param.getUsername()).mail(param.getMail()).telephone(param.getTelephone())
-                .status(param.getStatus()).deptId(param.getDeptId()).remark(param.getRemark()).build();
+        SysUser after = SysUser.builder().id(param.getId()).username(param.getUsername()).telephone(param.getTelephone()).mail(param.getMail())
+                .deptId(param.getDeptId()).status(param.getStatus()).remark(param.getRemark()).build();
+        after.setOperator(RequestHolder.getCurrentUser().getUsername());
+        after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
+        after.setOperateTime(new Date());
+        sysUserMapper.updateByPrimaryKeySelective(after);
 
         sysUserMapper.updateByPrimaryKeySelective(after);
     }
