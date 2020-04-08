@@ -534,8 +534,6 @@
             $.ajax({
                 url: isCreate ? "/sys/user/save.json" : "/sys/user/update.json",
                 data: $("#userForm").serializeArray(),
-                contentType: "application/json;charset=UTF-8",
-                dataType: "json",
                 type: 'POST',
                 success: function (result) {
                     if (result.ret) {
