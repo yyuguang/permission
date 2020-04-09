@@ -3,8 +3,12 @@ package com.lnzz.service.impl;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.lnzz.dao.SysAclModuleMapper;
 import com.lnzz.dao.SysDeptMapper;
+import com.lnzz.dto.AclDto;
+import com.lnzz.dto.AclModuleLevelDto;
 import com.lnzz.dto.DeptLevelDto;
+import com.lnzz.pojo.SysAclModule;
 import com.lnzz.pojo.SysDept;
 import com.lnzz.service.SysTreeService;
 import com.lnzz.utils.LevelUtil;
@@ -31,6 +35,8 @@ public class SysTreeServiceImpl implements SysTreeService {
 
     @Autowired
     private SysDeptMapper sysDeptMapper;
+    @Autowired
+    private SysAclModuleMapper sysAclModuleMapper;
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
@@ -44,6 +50,53 @@ public class SysTreeServiceImpl implements SysTreeService {
             dtoList.add(adapt);
         }
         return deptListToTree(dtoList);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public List<AclModuleLevelDto> aclModuleTree() {
+        List<SysAclModule> aclModuleList = sysAclModuleMapper.getAllAclModule();
+        List<AclModuleLevelDto> dtoList = Lists.newArrayList();
+        for (SysAclModule aclModule : aclModuleList) {
+            dtoList.add(AclModuleLevelDto.adapt(aclModule));
+        }
+        return aclModuleListToTree(dtoList);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public List<AclModuleLevelDto> aclModuleListToTree(List<AclModuleLevelDto> dtoList) {
+        if (CollectionUtils.isEmpty(dtoList)) {
+            return Lists.newArrayList();
+        }
+        // level -> [aclmodule1, aclmodule2, ...] Map<String, List<Object>>
+        Multimap<String, AclModuleLevelDto> levelAclModuleMap = ArrayListMultimap.create();
+        List<AclModuleLevelDto> rootList = Lists.newArrayList();
+
+        for (AclModuleLevelDto dto : dtoList) {
+            levelAclModuleMap.put(dto.getLevel(), dto);
+            if (LevelUtil.ROOT.equals(dto.getLevel())) {
+                rootList.add(dto);
+            }
+        }
+        Collections.sort(rootList, aclModuleSeqComparator);
+        transformAclModuleTree(rootList, LevelUtil.ROOT, levelAclModuleMap);
+        return rootList;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public void transformAclModuleTree(List<AclModuleLevelDto> dtoList, String level, Multimap<String, AclModuleLevelDto> levelAclModuleMap) {
+        for (int i = 0; i < dtoList.size(); i++) {
+            AclModuleLevelDto dto = dtoList.get(i);
+            String nextLevel = LevelUtil.calculateLevel(level, dto.getId());
+            List<AclModuleLevelDto> tempList = (List<AclModuleLevelDto>) levelAclModuleMap.get(nextLevel);
+            if (CollectionUtils.isNotEmpty(tempList)) {
+                Collections.sort(tempList, aclModuleSeqComparator);
+                dto.setAclModuleList(tempList);
+                transformAclModuleTree(tempList, nextLevel, levelAclModuleMap);
+            }
+        }
     }
 
     private List<DeptLevelDto> deptListToTree(List<DeptLevelDto> deptLevelList) {
@@ -100,6 +153,20 @@ public class SysTreeServiceImpl implements SysTreeService {
     private Comparator<DeptLevelDto> deptSeqComparator = new Comparator<DeptLevelDto>() {
         @Override
         public int compare(DeptLevelDto o1, DeptLevelDto o2) {
+            return o1.getSeq() - o2.getSeq();
+        }
+    };
+
+    private Comparator<AclModuleLevelDto> aclModuleSeqComparator = new Comparator<AclModuleLevelDto>() {
+        @Override
+        public int compare(AclModuleLevelDto o1, AclModuleLevelDto o2) {
+            return o1.getSeq() - o2.getSeq();
+        }
+    };
+
+    private Comparator<AclDto> aclSeqComparator = new Comparator<AclDto>() {
+        @Override
+        public int compare(AclDto o1, AclDto o2) {
             return o1.getSeq() - o2.getSeq();
         }
     };
