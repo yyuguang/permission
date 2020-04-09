@@ -1,8 +1,6 @@
 package com.lnzz.pojo;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -14,9 +12,11 @@ import java.util.Date;
  * @date 2020/4/2 14:35
  * @Description:
  */
-@Builder
-@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = {"id"})
+@Data
+@Builder
 public class SysAcl {
     private Integer id;
 
