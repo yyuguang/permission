@@ -50,4 +50,12 @@ public interface SysTreeService {
      * @param levelAclModuleMap
      */
     void transformAclModuleTree(List<AclModuleLevelDto> dtoList, String level, Multimap<String, AclModuleLevelDto> levelAclModuleMap);
+
+    /**
+     * 权限列表
+     *
+     * @param roleId
+     * @return
+     */
+    List<AclModuleLevelDto> roleTree(int roleId);
 }

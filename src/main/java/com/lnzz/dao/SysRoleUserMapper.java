@@ -1,6 +1,9 @@
 package com.lnzz.dao;
 
 import com.lnzz.pojo.SysRoleUser;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * ClassName：SysRoleUserMapper
@@ -22,4 +25,14 @@ public interface SysRoleUserMapper {
     int updateByPrimaryKeySelective(SysRoleUser record);
 
     int updateByPrimaryKey(SysRoleUser record);
+
+    List<Integer> getRoleIdListByUserId(@Param("userId") int userId);
+
+    List<Integer> getUserIdListByRoleId(@Param("roleId") int roleId);
+
+    void deleteByRoleId(@Param("roleId") int roleId);
+
+    void batchInsert(@Param("roleUserList") List<SysRoleUser> roleUserList);
+
+    List<Integer> getUserIdListByRoleIdList(@Param("roleIdList") List<Integer> roleIdList);
 }
