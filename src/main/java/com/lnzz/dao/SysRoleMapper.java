@@ -1,6 +1,9 @@
 package com.lnzz.dao;
 
 import com.lnzz.pojo.SysRole;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * ClassName：SysRoleMapper
@@ -22,4 +25,10 @@ public interface SysRoleMapper {
     int updateByPrimaryKeySelective(SysRole record);
 
     int updateByPrimaryKey(SysRole record);
+
+    List<SysRole> getAll();
+
+    int countByName(@Param("name") String name, @Param("id") Integer id);
+
+    List<SysRole> getByIdList(@Param("idList") List<Integer> idList);
 }
