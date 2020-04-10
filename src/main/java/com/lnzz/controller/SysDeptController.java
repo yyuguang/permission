@@ -56,4 +56,11 @@ public class SysDeptController {
         sysDeptService.update(param);
         return JsonData.success();
     }
+
+    @RequestMapping("/delete.json")
+    @ResponseBody
+    public JsonData delete(@RequestParam("id") int id) {
+        sysDeptService.delete(id);
+        return JsonData.success();
+    }
 }

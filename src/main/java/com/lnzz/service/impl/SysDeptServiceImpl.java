@@ -33,6 +33,8 @@ public class SysDeptServiceImpl implements SysDeptService {
 
     @Autowired
     private SysDeptMapper sysDeptMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
@@ -56,12 +58,12 @@ public class SysDeptServiceImpl implements SysDeptService {
     @Override
     public void update(DeptParam param) {
         BeanValidator.check(param);
-        if(checkExist(param.getParentId(), param.getName(), param.getId())) {
+        if (checkExist(param.getParentId(), param.getName(), param.getId())) {
             throw new ParamException("同一层级下存在相同名称的部门");
         }
         SysDept before = sysDeptMapper.selectByPrimaryKey(param.getId());
         Preconditions.checkNotNull(before, "待更新的部门不存在");
-        if(checkExist(param.getParentId(), param.getName(), param.getId())) {
+        if (checkExist(param.getParentId(), param.getName(), param.getId())) {
             throw new ParamException("同一层级下存在相同名称的部门");
         }
 
@@ -93,6 +95,20 @@ public class SysDeptServiceImpl implements SysDeptService {
             }
         }
         sysDeptMapper.updateByPrimaryKey(after);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void delete(int deptId) {
+        SysDept dept = sysDeptMapper.selectByPrimaryKey(deptId);
+        Preconditions.checkNotNull(dept, "待删除的部门不存在，无法删除");
+        if (sysDeptMapper.countByParentId(dept.getId()) > 0) {
+            throw new ParamException("当前部门下面有子部门，无法删除");
+        }
+        if (sysUserMapper.countByDeptId(dept.getId()) > 0) {
+            throw new ParamException("当前部门下面有用户，无法删除");
+        }
+        sysDeptMapper.deleteByPrimaryKey(deptId);
     }
 
     private boolean checkExist(Integer parentId, String deptName, Integer deptId) {

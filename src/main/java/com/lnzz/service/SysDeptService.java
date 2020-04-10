@@ -24,4 +24,11 @@ public interface SysDeptService {
      * @param param
      */
     void update(DeptParam param);
+
+    /**
+     * 删除部门
+     *
+     * @param deptId
+     */
+    void delete(int deptId);
 }
