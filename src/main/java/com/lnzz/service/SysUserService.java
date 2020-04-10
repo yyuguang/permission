@@ -5,6 +5,8 @@ import com.lnzz.beans.PageResult;
 import com.lnzz.param.UserParam;
 import com.lnzz.pojo.SysUser;
 
+import java.util.List;
+
 /**
  * ClassName：SysUserService
  *
@@ -44,4 +46,6 @@ public interface SysUserService {
      * @return
      */
     PageResult<SysUser> getPageByDeptId(int deptId, PageQuery pageQuery);
+
+    List<SysUser> getAll();
 }

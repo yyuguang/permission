@@ -1,11 +1,11 @@
 package com.lnzz.controller;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lnzz.common.JsonData;
 import com.lnzz.param.RoleParam;
-import com.lnzz.service.SysRoleAclService;
-import com.lnzz.service.SysRoleService;
-import com.lnzz.service.SysRoleUserService;
-import com.lnzz.service.SysTreeService;
+import com.lnzz.pojo.SysUser;
+import com.lnzz.service.*;
 import com.lnzz.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * ClassName：SysRoleController
@@ -35,6 +38,8 @@ public class SysRoleController {
     private SysRoleAclService sysRoleAclService;
     @Autowired
     private SysRoleUserService sysRoleUserService;
+    @Autowired
+    private SysUserService sysUserService;
 
 
     @RequestMapping("/role.page")
@@ -82,5 +87,25 @@ public class SysRoleController {
         List<Integer> userIdList = StringUtil.splitToListInt(userIds);
         sysRoleUserService.changeRoleUsers(roleId, userIdList);
         return JsonData.success();
+    }
+
+    @RequestMapping("/users.json")
+    @ResponseBody
+    public JsonData users(@RequestParam("roleId") int roleId) {
+        List<SysUser> selectedUserList = sysRoleUserService.getListByRoleId(roleId);
+        List<SysUser> allUserList = sysUserService.getAll();
+        List<SysUser> unselectedUserList = Lists.newArrayList();
+
+        Set<Integer> selectedUserIdSet = selectedUserList.stream().map(SysUser::getId).collect(Collectors.toSet());
+        for(SysUser sysUser : allUserList) {
+            if (sysUser.getStatus() == 1 && !selectedUserIdSet.contains(sysUser.getId())) {
+                unselectedUserList.add(sysUser);
+            }
+        }
+        // selectedUserList = selectedUserList.stream().filter(sysUser -> sysUser.getStatus() != 1).collect(Collectors.toList());
+        Map<String, List<SysUser>> map = Maps.newHashMap();
+        map.put("selected", selectedUserList);
+        map.put("unselected", unselectedUserList);
+        return JsonData.success(map);
     }
 }
