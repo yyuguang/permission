@@ -7,6 +7,7 @@ import com.lnzz.service.SysTreeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,5 +52,12 @@ public class SysAclModuleController {
     @ResponseBody
     public JsonData tree() {
         return JsonData.success(sysTreeService.aclModuleTree());
+    }
+
+    @RequestMapping("/delete.json")
+    @ResponseBody
+    public JsonData delete(@RequestParam("id") int id) {
+        sysAclModuleService.delete(id);
+        return JsonData.success();
     }
 }

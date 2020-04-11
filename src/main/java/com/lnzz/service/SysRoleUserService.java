@@ -18,5 +18,4 @@ public interface SysRoleUserService {
 
     void changeRoleUsers(int roleId, List<Integer> userIdList);
 
-    void saveRoleUserLog(int roleId, List<Integer> before, List<Integer> after);
 }

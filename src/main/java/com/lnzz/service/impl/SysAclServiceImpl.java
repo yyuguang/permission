@@ -9,6 +9,7 @@ import com.lnzz.exception.ParamException;
 import com.lnzz.param.AclParam;
 import com.lnzz.pojo.SysAcl;
 import com.lnzz.service.SysAclService;
+import com.lnzz.service.SysLogService;
 import com.lnzz.utils.BeanValidator;
 import com.lnzz.utils.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ import java.util.List;
 public class SysAclServiceImpl implements SysAclService {
     @Autowired
     private SysAclMapper sysAclMapper;
+    @Autowired
+    private SysLogService sysLogService;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
@@ -47,6 +50,7 @@ public class SysAclServiceImpl implements SysAclService {
         acl.setOperateTime(new Date());
         acl.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         sysAclMapper.insertSelective(acl);
+        sysLogService.saveAclLog(null, acl);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -66,6 +70,7 @@ public class SysAclServiceImpl implements SysAclService {
         after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
 
         sysAclMapper.updateByPrimaryKeySelective(after);
+        sysLogService.saveAclLog(before, after);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)

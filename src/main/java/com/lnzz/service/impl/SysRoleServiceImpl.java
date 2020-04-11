@@ -11,6 +11,7 @@ import com.lnzz.exception.ParamException;
 import com.lnzz.param.RoleParam;
 import com.lnzz.pojo.SysRole;
 import com.lnzz.pojo.SysUser;
+import com.lnzz.service.SysLogService;
 import com.lnzz.service.SysRoleService;
 import com.lnzz.utils.BeanValidator;
 import com.lnzz.utils.IpUtil;
@@ -42,6 +43,8 @@ public class SysRoleServiceImpl implements SysRoleService {
     private SysRoleAclMapper sysRoleAclMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private SysLogService sysLogService;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
@@ -56,6 +59,7 @@ public class SysRoleServiceImpl implements SysRoleService {
         role.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         role.setOperateTime(new Date());
         sysRoleMapper.insertSelective(role);
+        sysLogService .saveRoleLog(null, role);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -74,6 +78,7 @@ public class SysRoleServiceImpl implements SysRoleService {
         after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
         sysRoleMapper.updateByPrimaryKeySelective(after);
+        sysLogService.saveRoleLog(before, after);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)

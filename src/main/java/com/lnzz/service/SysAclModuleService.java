@@ -24,4 +24,11 @@ public interface SysAclModuleService {
      * @param param
      */
     void update(AclModuleParam param);
+
+    /**
+     * delete
+     *
+     * @param aclModuleId
+     */
+    void delete(int aclModuleId);
 }

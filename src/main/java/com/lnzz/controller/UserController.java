@@ -6,7 +6,7 @@ import com.lnzz.utils.Md5Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class UserController {
     @Autowired
     private SysUserService sysUserService;
 
-    @PostMapping("/login.page")
+    @RequestMapping("/login.page")
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -63,7 +63,7 @@ public class UserController {
         request.getRequestDispatcher(path).forward(request, response);
     }
 
-    @PostMapping("logout.page")
+    @RequestMapping("logout.page")
     public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().invalidate();
         String path = "signin.jsp";

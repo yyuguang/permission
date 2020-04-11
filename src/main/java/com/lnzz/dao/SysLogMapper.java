@@ -1,7 +1,12 @@
 package com.lnzz.dao;
 
+import com.lnzz.beans.PageQuery;
+import com.lnzz.dto.SearchLogDto;
 import com.lnzz.pojo.SysLog;
 import com.lnzz.pojo.SysLogWithBLOBs;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * ClassName：SysLogMapper
@@ -25,4 +30,8 @@ public interface SysLogMapper {
     int updateByPrimaryKeyWithBLOBs(SysLogWithBLOBs record);
 
     int updateByPrimaryKey(SysLog record);
+
+    int countBySearchDto(@Param("dto") SearchLogDto dto);
+
+    List<SysLogWithBLOBs> getPageListBySearchDto(@Param("dto") SearchLogDto dto, @Param("page") PageQuery page);
 }

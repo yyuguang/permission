@@ -8,6 +8,7 @@ import com.lnzz.dao.SysUserMapper;
 import com.lnzz.exception.ParamException;
 import com.lnzz.param.UserParam;
 import com.lnzz.pojo.SysUser;
+import com.lnzz.service.SysLogService;
 import com.lnzz.service.SysUserService;
 import com.lnzz.utils.BeanValidator;
 import com.lnzz.utils.IpUtil;
@@ -33,6 +34,8 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private SysLogService sysLogService;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
@@ -56,6 +59,7 @@ public class SysUserServiceImpl implements SysUserService {
 
         //todo send Email
         sysUserMapper.insertSelective(user);
+        sysLogService.saveUserLog(null, user);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -78,6 +82,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUserMapper.updateByPrimaryKeySelective(after);
 
         sysUserMapper.updateByPrimaryKeySelective(after);
+        sysLogService.saveUserLog(before, after);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)

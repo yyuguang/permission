@@ -16,5 +16,4 @@ public interface SysRoleAclService {
 
     void updateRoleAcls(int roleId, List<Integer> aclIdList);
 
-    void saveRoleAclLog(int roleId, List<Integer> before, List<Integer> after);
 }

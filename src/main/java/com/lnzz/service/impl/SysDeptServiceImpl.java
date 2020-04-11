@@ -8,6 +8,7 @@ import com.lnzz.exception.ParamException;
 import com.lnzz.pojo.SysDept;
 import com.lnzz.param.DeptParam;
 import com.lnzz.service.SysDeptService;
+import com.lnzz.service.SysLogService;
 import com.lnzz.utils.BeanValidator;
 import com.lnzz.utils.IpUtil;
 import com.lnzz.utils.LevelUtil;
@@ -35,6 +36,8 @@ public class SysDeptServiceImpl implements SysDeptService {
     private SysDeptMapper sysDeptMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private SysLogService sysLogService;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
@@ -52,6 +55,7 @@ public class SysDeptServiceImpl implements SysDeptService {
         dept.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         dept.setOperateTime(new Date());
         sysDeptMapper.insertSelective(dept);
+        sysLogService.saveDeptLog(null, dept);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -75,6 +79,7 @@ public class SysDeptServiceImpl implements SysDeptService {
         after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
         updateWithChild(before, after);
+        sysLogService.saveDeptLog(before, after);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
