@@ -1,14 +1,19 @@
 package com.lnzz.controller;
 
+import com.google.common.collect.Maps;
 import com.lnzz.beans.PageQuery;
 import com.lnzz.beans.PageResult;
 import com.lnzz.common.JsonData;
 import com.lnzz.param.UserParam;
 import com.lnzz.pojo.SysUser;
+import com.lnzz.service.SysRoleService;
+import com.lnzz.service.SysTreeService;
 import com.lnzz.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * ClassName：SysUserController
@@ -23,6 +28,10 @@ import org.springframework.web.bind.annotation.*;
 public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SysTreeService sysTreeService;
+    @Autowired
+    private SysRoleService sysRoleService;
 
     @PostMapping("/save.json")
     @ResponseBody
@@ -43,5 +52,14 @@ public class SysUserController {
     public JsonData page(@RequestParam("deptId") int deptId, PageQuery pageQuery) {
         PageResult<SysUser> result = sysUserService.getPageByDeptId(deptId, pageQuery);
         return JsonData.success(result);
+    }
+
+    @RequestMapping("/acls.json")
+    @ResponseBody
+    public JsonData acls(@RequestParam("userId") int userId) {
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("acls", sysTreeService.userAclTree(userId));
+        map.put("roles", sysRoleService.getRoleListByUserId(userId));
+        return JsonData.success(map);
     }
 }

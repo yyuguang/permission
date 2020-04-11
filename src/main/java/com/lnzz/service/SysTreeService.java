@@ -58,4 +58,11 @@ public interface SysTreeService {
      * @return
      */
     List<AclModuleLevelDto> roleTree(int roleId);
+
+    /**
+     * 用户权限数据
+     * @param userId
+     * @return
+     */
+    List<AclModuleLevelDto> userAclTree(int userId);
 }
