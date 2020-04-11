@@ -8,6 +8,7 @@ import com.lnzz.dao.SysRoleAclMapper;
 import com.lnzz.dao.SysRoleUserMapper;
 import com.lnzz.pojo.SysAcl;
 import com.lnzz.pojo.SysUser;
+import com.lnzz.service.SysCacheService;
 import com.lnzz.service.SysCoreService;
 import com.lnzz.utils.JsonMapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,6 +39,8 @@ public class SysCoreServiceImpl implements SysCoreService {
     private SysRoleUserMapper sysRoleUserMapper;
     @Autowired
     private SysRoleAclMapper sysRoleAclMapper;
+    @Autowired
+    private SysCacheService sysCacheService;
 
     @Override
     public boolean hasUrlAcl(String url) {
@@ -107,18 +110,17 @@ public class SysCoreServiceImpl implements SysCoreService {
 
     @Override
     public List<SysAcl> getCurrentUserAclListFromCache() {
-//            int userId = RequestHolder.getCurrentUser().getId();
-//            String cacheValue = sysCacheService.getFromCache(CacheKeyConstants.USER_ACLS, String.valueOf(userId));
-//            if (StringUtils.isBlank(cacheValue)) {
-//                List<SysAcl> aclList = getCurrentUserAclList();
-//                if (CollectionUtils.isNotEmpty(aclList)) {
-//                    sysCacheService.saveCache(JsonMapper.obj2String(aclList), 600, CacheKeyConstants.USER_ACLS, String.valueOf(userId));
-//                }
-//                return aclList;
-//            }
-//            return JsonMapper.string2Obj(cacheValue, new TypeReference<List<SysAcl>>() {
-//            });
-        return null;
+        int userId = RequestHolder.getCurrentUser().getId();
+        String cacheValue = sysCacheService.getFromCache(CacheKeyConstants.USER_ACLS, String.valueOf(userId));
+        if (StringUtils.isBlank(cacheValue)) {
+            List<SysAcl> aclList = getCurrentUserAclList();
+            if (CollectionUtils.isNotEmpty(aclList)) {
+                sysCacheService.saveCache(JsonMapper.obj2String(aclList), 600, CacheKeyConstants.USER_ACLS, String.valueOf(userId));
+            }
+            return aclList;
+        }
+        return JsonMapper.string2Obj(cacheValue, new TypeReference<List<SysAcl>>() {
+        });
     }
 
     private boolean isSuperAdmin() {
