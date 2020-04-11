@@ -12,6 +12,7 @@ import com.lnzz.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
 
@@ -32,6 +33,12 @@ public class SysUserController {
     private SysTreeService sysTreeService;
     @Autowired
     private SysRoleService sysRoleService;
+
+
+    @RequestMapping("/noAuth.page")
+    public ModelAndView noAuth(){
+        return new ModelAndView("noAuth");
+    }
 
     @PostMapping("/save.json")
     @ResponseBody
